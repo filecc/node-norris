@@ -48,7 +48,7 @@ const server = http.createServer((req, res) => {
     })
 }
 fetchJoke();
-console.log(fetchCounter)
+
 });
 
 server.listen(process.env.PORT ?? 3000, () => {

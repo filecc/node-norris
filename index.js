@@ -1,41 +1,27 @@
 const http = require('http')
 const fs = require('fs')
 const path = require("path");
+const { addJokeToFileIfNotExists } = require('./utils/functions')
 const url = "https://api.chucknorris.io/jokes/random"
 
-const readFileAndReturnArray = () => {
-    const jokesPath = path.join(__dirname, "norrisDb.json");
-    try {
-        const jokes = fs.readFileSync(jokesPath, "utf-8");
-        return JSON.parse(jokes);
-      } catch (err) {
-        console.log(err.message);
-        return [];
-      }
-}
 
-const addJokeToFileIfNotExists = (joke) => {
-    const jokes = readFileAndReturnArray()
-    if(jokes.length === 0) {
-        jokes.push(joke)
-        fs.writeFileSync("norrisDb.json", JSON.stringify(jokes));
-    } else {
-        const jokeExists = jokes.find((j) => j.id === joke.id)
-        if(!jokeExists) {
-            jokes.push(joke)
-            fs.writeFileSync("norrisDb.json", JSON.stringify(jokes));
-        }
-    }
-}
 
 const server = http.createServer((req, res) => {
-
+    // remove favicon request
+    if(req.url === '/favicon.ico') {
+        res.writeHead(200, { "Content-Type": "image/x-icon" });
+        res.end();
+        return
+    }
+    // fetch joke from API
     fetch(url)
       .then((data) => data.json())
       .then((data) => {
 
+        // add joke to file if not exists
         addJokeToFileIfNotExists(data)
         
+        // write response
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
         res.write(
           `<main style="padding: 2rem;">

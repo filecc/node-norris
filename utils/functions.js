@@ -14,7 +14,7 @@ const readFileAndReturnArray = () => {
 }
 
 const addJokeToFileIfNotExists = (joke) => {
-    console.log(joke)
+
     const jokes = readFileAndReturnArray()
     if(jokes.length === 0) {
         jokes.push(joke)

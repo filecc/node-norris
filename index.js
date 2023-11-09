@@ -4,6 +4,7 @@ const { addJokeToFileIfNotExists, fetchApi } = require("./utils/functions");
 
 const server = http.createServer((req, res) => {
   const url = "https://api.chucknorris.io/jokes/random";
+  let fetchCounter = 0
   // remove favicon request
   if (req.url === "/favicon.ico") {
     res.writeHead(200, { "Content-Type": "image/x-icon" });
@@ -28,12 +29,26 @@ const server = http.createServer((req, res) => {
             );
             res.end();
         } else {
+            fetchCounter++;
             console.log("Joke already exists in the file. Fetching a new one...")
             fetchJoke()
+        }
+        if(fetchCounter > 10){
+            res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+            res.write(
+            `<main style="padding: 2rem;">
+                <div style="text-align: center">
+                    <img style="max-width: 300px" src="https://api.chucknorris.io/img/chucknorris_logo_coloured_small@2x.png" />
+                </div>
+                <h1>Sorry but, no more jokes.</h1>
+            </main>`
+            );
+            res.end();
         }
     })
 }
 fetchJoke();
+console.log(fetchCounter)
 });
 
 server.listen(process.env.PORT ?? 3000, () => {
